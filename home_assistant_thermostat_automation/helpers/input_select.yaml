@@ -1,8 +1,0 @@
-input_select:
-  seasonal_mode:
-    name: Seasonal Mode
-    options:
-      - Winter
-      - Summer
-    initial: Winter
-    icon: mdi-weather-partly-snowy
