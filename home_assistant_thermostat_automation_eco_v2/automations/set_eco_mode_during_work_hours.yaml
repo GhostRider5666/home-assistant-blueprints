@@ -1,0 +1,19 @@
+alias: Set Eco Mode During Work Hours
+trigger:
+  - platform: time
+    at: "09:00:00"
+condition:
+  - condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.seasonal_mode
+    data:
+      option: Eco
+mode: single
