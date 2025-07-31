@@ -1,0 +1,32 @@
+alias: Set Seasonal Mode Automatically
+trigger:
+  - platform: time
+    at: "00:00:00"
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: time
+                after: "10-01"
+                before: "04-01"
+        sequence:
+          - service: input_select.select_option
+            target:
+              entity_id: input_select.seasonal_mode
+            data:
+              option: "Winter"
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: time
+                after: "04-01"
+                before: "10-01"
+        sequence:
+          - service: input_select.select_option
+            target:
+              entity_id: input_select.seasonal_mode
+            data:
+              option: "Summer"
+mode: single
