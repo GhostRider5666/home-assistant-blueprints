@@ -1,0 +1,48 @@
+
+blueprint:
+  name: Auto Switch to Summer Mode
+  description: Automatically sets seasonal mode to Summer based on temperature and date.
+  domain: automation
+  input:
+    outdoor_temp_sensor:
+      name: Outdoor Temperature Sensor
+      selector:
+        entity:
+          domain: sensor
+    seasonal_mode_input:
+      name: Seasonal Mode Input Select
+      selector:
+        entity:
+          domain: input_select
+    summer_temp_threshold:
+      name: Summer Trigger Temperature
+      default: 70
+      selector:
+        number:
+          min: 60
+          max: 90
+          unit_of_measurement: "°F"
+
+trigger:
+  - platform: time
+    at: "08:00:00"
+
+condition:
+  - condition: numeric_state
+    entity_id: !input outdoor_temp_sensor
+    above: !input summer_temp_threshold
+  - condition: template
+    value_template: >
+      {{ now().month in [5, 6, 7, 8, 9] }}
+  - condition: template
+    value_template: >
+      {{ states(!input seasonal_mode_input) != 'Summer' }}
+
+action:
+  - service: input_select.select_option
+    target:
+      entity_id: !input seasonal_mode_input
+    data:
+      option: Summer
+
+mode: single

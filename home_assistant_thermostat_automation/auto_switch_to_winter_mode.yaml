@@ -1,0 +1,48 @@
+
+blueprint:
+  name: Auto Switch to Winter Mode
+  description: Automatically sets seasonal mode to Winter based on temperature and date.
+  domain: automation
+  input:
+    outdoor_temp_sensor:
+      name: Outdoor Temperature Sensor
+      selector:
+        entity:
+          domain: sensor
+    seasonal_mode_input:
+      name: Seasonal Mode Input Select
+      selector:
+        entity:
+          domain: input_select
+    winter_temp_threshold:
+      name: Winter Trigger Temperature
+      default: 50
+      selector:
+        number:
+          min: 30
+          max: 60
+          unit_of_measurement: "°F"
+
+trigger:
+  - platform: time
+    at: "08:00:00"
+
+condition:
+  - condition: numeric_state
+    entity_id: !input outdoor_temp_sensor
+    below: !input winter_temp_threshold
+  - condition: template
+    value_template: >
+      {{ now().month in [10, 11, 12, 1, 2, 3, 4] }}
+  - condition: template
+    value_template: >
+      {{ states(!input seasonal_mode_input) != 'Winter' }}
+
+action:
+  - service: input_select.select_option
+    target:
+      entity_id: !input seasonal_mode_input
+    data:
+      option: Winter
+
+mode: single
